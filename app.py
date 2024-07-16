@@ -1,10 +1,10 @@
-# import os
-# from dotenv import load_dotenv
-# load_dotenv()
+import os
+from dotenv import load_dotenv
+load_dotenv()
 # LINE_CHANNEL_ACCESS_TOKEN = os.getenv('LINE_CHANNEL_ACCESS_TOKEN')
 # LINE_CHANNEL_SECRET = os.getenv('LINE_CHANNEL_SECRET')
-LINE_CHANNEL_ACCESS_TOKEN = 'qO/9KWNS7EcQnI/CLYo6FeaouIA/4+5QcYDjwrm8Oxi5nwtyGXLXRQqsd5cRq4xHqLOWCe5UjrNmJqsjNAUQUOo43LrIg3a2Aew3Azp89pNCB2T3/z2o2wrexO6PSutaUQaFd1TmEt16qvML5rYfPQdB04t89/1O/w1cDnyilFU='
-LINE_CHANNEL_SECRET = 'e0d5a3480a25f89749f6097f94b4a135'
+LINE_CHANNEL_ACCESS_TOKEN=os.getenv('LINE_CHANNEL_ACCESS_TOKEN')
+LINE_CHANNEL_SECRET=os.getenv('LINE_CHANNEL_SECRET')
 
 from flask import Flask, request, abort
 from linebot.v3 import WebhookHandler
@@ -51,6 +51,8 @@ def handle_message(event):
                 messages=[TextMessage(text="Hello, world!")]
             )
         )
+
+# @handler.
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8787)
