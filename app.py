@@ -45,7 +45,12 @@ def callback():
 def handle_message(event):
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
-        line_bot_api.reply_message_with_http_info( ReplyMessageRequest( reply_token=event.reply_token, messages=[TextMessage(text=event.message.text)]))
+        line_bot_api.reply_message_with_http_info(
+            ReplyMessageRequest(
+                reply_token=event.reply_token, 
+                messages=[TextMessage(text="Hello, world!")]
+            )
+        )
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8787)
