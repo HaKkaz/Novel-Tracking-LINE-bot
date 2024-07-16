@@ -22,6 +22,8 @@ handler = WebhookHandler(LINE_CHANNEL_SECRET)
 
 @app.route("/callback", methods=['POST'])
 def callback():
+    if request.headers.get('X-Line-Signature') is None:
+        abort(404)
     # get X-Line-Signature header value
     signature = request.headers['X-Line-Signature']
 
@@ -46,5 +48,4 @@ def handle_message(event):
         line_bot_api.reply_message_with_http_info( ReplyMessageRequest( reply_token=event.reply_token, messages=[TextMessage(text=event.message.text)]))
 
 if __name__ == "__main__":
-    app.run()
-貼
+    app.run(host='0.0.0.0', port=8787)
