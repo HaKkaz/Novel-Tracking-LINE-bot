@@ -32,12 +32,13 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_message(event):
-    if event.message.text == "Subscribe":
+    msg: str = event.message.text
+    if msg.startswith("訂閱"):
         command.subscribe(event)
-    elif event.message.text == "Unsubscribe":
+    elif msg.startswith("取消"):
         command.unsubscribe(event)
     else:
-        command.reply_message(event.reply_token, "Hello, World!")
+        command.reply_message(event.reply_token, "請輸入正確指令")
 
 if __name__ == "__main__":
     broadcast_thread = threading.Thread(target=broadcast.broadcast_message)
