@@ -1,24 +1,13 @@
-import os
-from dotenv import load_dotenv
-load_dotenv()
-# LINE_CHANNEL_ACCESS_TOKEN = os.getenv('LINE_CHANNEL_ACCESS_TOKEN')
-# LINE_CHANNEL_SECRET = os.getenv('LINE_CHANNEL_SECRET')
-LINE_CHANNEL_ACCESS_TOKEN=os.getenv('LINE_CHANNEL_ACCESS_TOKEN')
-LINE_CHANNEL_SECRET=os.getenv('LINE_CHANNEL_SECRET')
+import threading
 
 from flask import Flask, request, abort
-from linebot.v3 import WebhookHandler
 from linebot.v3.exceptions import InvalidSignatureError
-from linebot.v3.messaging import Configuration, ApiClient, MessagingApi, ReplyMessageRequest, TextMessage
 from linebot.v3.webhooks import MessageEvent, TextMessageContent
 
+from service import command, broadcast
+from service.config import handler
+
 app = Flask(__name__)
-
-configuration = Configuration(
-    access_token=LINE_CHANNEL_ACCESS_TOKEN
-)
-handler = WebhookHandler(LINE_CHANNEL_SECRET)
-
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -43,16 +32,16 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_message(event):
-    with ApiClient(configuration) as api_client:
-        line_bot_api = MessagingApi(api_client)
-        line_bot_api.reply_message_with_http_info(
-            ReplyMessageRequest(
-                reply_token=event.reply_token, 
-                messages=[TextMessage(text="Hello, world!")]
-            )
-        )
-
-# @handler.
+    if event.message.text == "Subscribe":
+        command.subscribe(event)
+    elif event.message.text == "Unsubscribe":
+        command.unsubscribe(event)
+    else:
+        command.reply_message(event.reply_token, "Hello, World!")
 
 if __name__ == "__main__":
+    broadcast_thread = threading.Thread(target=broadcast.broadcast_message)
+    broadcast_thread.daemon = True
+    broadcast_thread.start()
+
     app.run(host='0.0.0.0', port=8787)
