@@ -41,7 +41,7 @@ def handle_message(event):
         command.reply_message(event.reply_token, "請輸入正確指令")
 
 if __name__ == "__main__":
-    broadcast_thread = threading.Thread(target=broadcast.broadcast_message)
+    broadcast_thread = threading.Thread(target=broadcast.broadcast_updates)
     broadcast_thread.daemon = True
     broadcast_thread.start()
 

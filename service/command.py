@@ -1,16 +1,5 @@
-from linebot.v3.messaging import ApiClient, MessagingApi
-from linebot.v3.messaging.models import ReplyMessageRequest, TextMessage
-from service.config import configuration
+from utils.messaging import reply_message
 
-def reply_message(reply_token, message):
-    with ApiClient(configuration) as api_client:
-        line_bot_api = MessagingApi(api_client)
-        line_bot_api.reply_message_with_http_info(
-            ReplyMessageRequest(
-                reply_token=reply_token, 
-                messages=[TextMessage(text=message)]
-            )
-        )
 
 def subscribe(event):
     msg: str = event.message.text
