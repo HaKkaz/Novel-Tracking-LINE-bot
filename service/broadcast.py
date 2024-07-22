@@ -1,6 +1,7 @@
 from utils.messaging import broadcast_message
 from utils.extract_chapters import extract_chapters
-from utils.classes import Novel, Chapter, novels
+from utils.classes import novels
+from service.config import BROADCAST_INTERVAL
 import time
 
 def broadcast_updates():
@@ -17,12 +18,13 @@ def broadcast_updates():
             j = 0
             for i in range(len(chapters) - 1, -1, -1):
                 chapter = chapters[i]
-                if chapter.number >= novel.lastest_chapter: # TODO: operator should be `>`
+                if chapter.number > novel.lastest_chapter: # TODO: operator should be `>`
                     j = i
             
             for i in range(j, len(chapters)):
                 message += f'{chapters[i]}\n'
             
+            novel.lastest_chapter = chapters[-1].number
             broadcast_message(message)
 
-        time.sleep(60)
+        time.sleep(BROADCAST_INTERVAL)
