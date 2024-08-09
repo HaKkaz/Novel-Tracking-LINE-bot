@@ -1,4 +1,4 @@
-from utils.messaging import reply_message
+from src.utils.messaging import reply_message
 
 
 def subscribe(event):

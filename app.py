@@ -4,8 +4,8 @@ from flask import Flask, request, abort
 from linebot.v3.exceptions import InvalidSignatureError
 from linebot.v3.webhooks import MessageEvent, TextMessageContent
 
-from service import command, broadcast
-from service.config import handler
+from src.service import command, broadcast
+from src.service.config import handler
 
 app = Flask(__name__)
 

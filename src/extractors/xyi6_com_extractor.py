@@ -7,16 +7,6 @@ from src.models.classes import Chapter, Novel
 from src.extractors.base_extractor import BaseExtractor
 from src.extractors.logger import logger
 
-novels = [
-    Novel(
-        name='將門棄婦又震懾邊關了', 
-        id='5502',
-        url='https://xyi6.com/Book/Indexd3/bookshow/bookId/5502.html',
-        website='xyi6.com',
-        lastest_chapter=830,
-    ),
-]
-
 class xyi6_com_extractor(BaseExtractor):
     def __init__(self) -> None:
         super().__init__()

@@ -1,10 +1,19 @@
 from src.utils.messaging import broadcast_message
-from src.extractors import xyi6_com_extractor
+from src.extractors.xyi6_com_extractor import xyi6_com_extractor
+from src.extractors.novels_com_extractor import novels_com_extractor
+from src.extractors.base_extractor import BaseExtractor as Extractors
 from src.models.classes import Chapter, Novel
-from service.config import BROADCAST_INTERVAL
+from src.models.novel_list import novels
+from src.service.config import BROADCAST_INTERVAL
+from src.service.logger import logger
+
 import time
 from datetime import datetime
 
+extractors: dict[str, Extractors] = {
+    "xyi6.com": xyi6_com_extractor(),
+    "www.novels.com.tw": novels_com_extractor(),
+}
 
 def get_current_time() -> str:
     now = datetime.now()
@@ -17,7 +26,11 @@ def broadcast_updates():
         for i in range(len(novels)):
             novel: Novel = novels[i]
             print(f'{novel.name} {novel.lastest_chapter}')
-            chapters: list[Chapter] = extract_chapters(novel)
+
+            if novel.website not in extractors:
+                logger.error(f"Extractor for {novel.website} not found")
+                continue
+            chapters: list[Chapter] = extractors[novel.url].extract_chapters(novel)
 
             message = f"{novel.name} 最新章節:\n"
             
@@ -25,7 +38,7 @@ def broadcast_updates():
             new_chapters = []
             for i in range(len(chapters) - 1, -1, -1):
                 chapter = chapters[i]
-                if chapter.number > novel.lastest_chapter: # TODO: operator should be `>`
+                if chapter.number > novel.lastest_chapter:
                     new_chapters.append(chapter)
             
             # if no new chapters, skip to next novel

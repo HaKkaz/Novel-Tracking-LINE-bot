@@ -1,6 +1,6 @@
 from linebot.v3.messaging import ApiClient, MessagingApi
 from linebot.v3.messaging.models import ReplyMessageRequest, TextMessage, BroadcastRequest
-from service.config import configuration
+from src.service.config import configuration
 
 
 def reply_message(reply_token, message):
