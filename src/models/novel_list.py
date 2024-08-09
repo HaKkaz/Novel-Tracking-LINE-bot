@@ -9,10 +9,10 @@ novels = [
         lastest_chapter=915,
     ),
     Novel(
-        name='將門棄婦又震懾邊關了', 
-        id='no3a28494c871d48c047dc09fda3a580b25e41f725991777b9df0a2174b3f7286e',
-        url='https://www.novels.com.tw/novels/no3a28494c871d48c047dc09fda3a580b25e41f725991777b9df0a2174b3f7286e/',
+        name='夫人有新歡了，霍總全球追妻', 
+        id='nod288593604df337cb749726f76484b107a165581c286f9aba5a132fd64391b5a/',
+        url='https://www.novels.com.tw/novels/nod288593604df337cb749726f76484b107a165581c286f9aba5a132fd64391b5a/',
         website='www.novels.com.tw',
-        lastest_chapter=810,
+        lastest_chapter=922,
     ),
 ]
