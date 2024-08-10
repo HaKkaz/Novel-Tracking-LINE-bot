@@ -1,11 +1,10 @@
 import requests
 from requests.exceptions import RequestException
 from bs4 import BeautifulSoup
-from posixpath import join as urljoin
 
 from src.models.classes import Chapter, Novel
 from src.extractors.base_extractor import BaseExtractor
-from src.extractors.logger import logger
+from src.utils.logger import service_logger
 
 class xyi6_com_extractor(BaseExtractor):
     def __init__(self) -> None:
@@ -15,8 +14,6 @@ class xyi6_com_extractor(BaseExtractor):
     def get_last_option_value(html: str):
         soup = BeautifulSoup(html, 'lxml')
         options = soup.find_all('option')
-        print(html)
-        print(options)
         if options:
             return options[-1]['value']
         else:
@@ -33,12 +30,17 @@ class xyi6_com_extractor(BaseExtractor):
             if a_tag:
                 chapter_info = a_tag.text.strip()
                 href = a_tag['href']
-                chapter_number, chapter_title = chapter_info.split(' ', 1)
+                chapter_info = chapter_info.split(' ', 1)
+
+                
+                chapter_number = chapter_info[0] if chapter_info else 0
+                chapter_title = chapter_info[1] if len(chapter_info) > 1 else ''
+
                 chapters.append(
                     Chapter(
                         number=int(chapter_number), 
-                        title=chapter_title.split()[1], 
-                        url=urljoin('https://xyi6.com/', href)
+                        title=chapter_title,
+                        url='https://xyi6.com'+ href
                     )
                 )
         
@@ -51,7 +53,6 @@ class xyi6_com_extractor(BaseExtractor):
             if novel.website != 'xyi6.com':
                 raise ValueError(f"Expected novel website to be 'xyi6.com', got {novel.website} instead.")
             response = requests.post(novel.url)
-            print(response.text)
             response.raise_for_status()  # Raise HTTPError for bad responses
 
             # 找到最後一個 option 的 value
@@ -69,11 +70,11 @@ class xyi6_com_extractor(BaseExtractor):
 
             return chapters
         except RequestException as e:
-            logger.error(f"Network error while extracting chapters from {novel.name}: {e}")
+            service_logger.error(f"Network error while extracting chapters from {novel.name}: {e}")
             return []
         except TypeError as e:
-            logger.error(f"TypeError in xyi6_com_extractor.")
+            service_logger.error(f"TypeError in xyi6_com_extractor.")
             return []
         except Exception as e:
-            logger.error(f"Failed to extract chapters from {novel.name} with error: {e}")
+            service_logger.error(f"Failed to extract chapters from {novel.name} with error: {e}")
             return []

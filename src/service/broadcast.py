@@ -5,7 +5,7 @@ from src.extractors.base_extractor import BaseExtractor as Extractors
 from src.models.classes import Chapter, Novel
 from src.models.novel_list import novels
 from src.service.config import BROADCAST_INTERVAL
-from src.service.logger import logger
+from src.utils.logger import service_logger
 
 import time
 from datetime import datetime
@@ -21,34 +21,38 @@ def get_current_time() -> str:
     return formatted_time
 
 def broadcast_updates():
-    while True:
-        print(f"[{get_current_time()}] Checking for updates...")
-        for i in range(len(novels)):
-            novel: Novel = novels[i]
-            print(f'{novel.name} {novel.lastest_chapter}')
+    try:
+        while True:
+            for novel in novels:
+                service_logger.info(f"Checking for updates for {novel.name}")
+                if novel.website not in extractors:
+                    service_logger.error(f"Extractor for {novel.website} not found")
+                    continue
+                chapters: list[Chapter] = extractors[novel.website].extract_chapters(novel)
 
-            if novel.website not in extractors:
-                logger.error(f"Extractor for {novel.website} not found")
-                continue
-            chapters: list[Chapter] = extractors[novel.url].extract_chapters(novel)
+                message = f"{novel.name} 最新章節:\n"
+                
+                # find first chapter that is newer than the latest chapter
+                new_chapters = []
+                for i in range(len(chapters) - 1, -1, -1):
+                    chapter = chapters[i]
+                    if chapter.number > novel.lastest_chapter:
+                        new_chapters.append(chapter)
+                
+                # if no new chapters, skip to next novel
+                if not new_chapters:
+                    continue
+                
+                new_chapters = new_chapters[::-1]
+                message += '\n'.join(map(str, new_chapters))
 
-            message = f"{novel.name} 最新章節:\n"
-            
-            # find first chapter that is newer than the latest chapter
-            new_chapters = []
-            for i in range(len(chapters) - 1, -1, -1):
-                chapter = chapters[i]
-                if chapter.number > novel.lastest_chapter:
-                    new_chapters.append(chapter)
-            
-            # if no new chapters, skip to next novel
-            if not new_chapters:
-                continue
-            
-            new_chapters = new_chapters[::-1]
-            message += '\n'.join(map(str, new_chapters))
-            
-            novel.lastest_chapter = chapters[-1].number
-            broadcast_message(message)
+                print(f"[{get_current_time()}] {novel.name} is checking for updates, updated {novel.lastest_chapter} to {new_chapters[-1].number}")
+                
+                novel.lastest_chapter = chapters[-1].number
+                broadcast_message(message)
 
-        time.sleep(BROADCAST_INTERVAL)
+            time.sleep(BROADCAST_INTERVAL)
+    except Exception as e:
+        service_logger.error(f"Error in broadcast_updates: {e}")
+        time.sleep(60)
+        broadcast_updates()

@@ -40,9 +40,10 @@ def handle_message(event):
     else:
         command.reply_message(event.reply_token, "請輸入正確指令")
 
-if __name__ == "__main__":
-    broadcast_thread = threading.Thread(target=broadcast.broadcast_updates)
-    broadcast_thread.daemon = True
-    broadcast_thread.start()
+# Start broadcast thread
+broadcast_thread = threading.Thread(target=broadcast.broadcast_updates)
+broadcast_thread.daemon = True
+broadcast_thread.start()
 
-    app.run(host='0.0.0.0', port=8787)
+# Start flask app
+app.run(host='0.0.0.0', port=9876)
