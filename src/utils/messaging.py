@@ -1,6 +1,7 @@
 from linebot.v3.messaging import ApiClient, MessagingApi
 from linebot.v3.messaging.models import ReplyMessageRequest, TextMessage, BroadcastRequest
 from src.service.config import configuration
+from src.utils.time import get_current_time
 
 
 def reply_message(reply_token, message):
@@ -14,7 +15,7 @@ def reply_message(reply_token, message):
         )
 
 def broadcast_message(message: str):
-    print(f'[DEBUG] broadcase message: {message}')
+    print(f'[{get_current_time()}] [DEBUG] broadcase message: {message}\n')
     try:
         with ApiClient(configuration) as api_client:
             line_bot_api = MessagingApi(api_client)
@@ -24,4 +25,5 @@ def broadcast_message(message: str):
                 )
             )
     except Exception as e:
-        print(e)
+        print(f'Error in broadcast_message, {e}')
+        print('current message:', message)

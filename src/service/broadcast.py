@@ -6,24 +6,20 @@ from src.models.classes import Chapter, Novel
 from src.models.novel_list import novels
 from src.service.config import BROADCAST_INTERVAL
 from src.utils.logger import service_logger
+from src.utils.time import get_current_time
 
 import time
-from datetime import datetime
 
 extractors: dict[str, Extractors] = {
     "xyi6.com": xyi6_com_extractor(),
     "www.novels.com.tw": novels_com_extractor(),
 }
 
-def get_current_time() -> str:
-    now = datetime.now()
-    formatted_time = now.strftime("%Y/%m/%d %H:%M:%S")
-    return formatted_time
-
 def broadcast_updates():
     try:
         while True:
-            for novel in novels:
+            for i in range(len(novels)):
+                novel = novels[i]
                 service_logger.info(f"Checking for updates for {novel.name}")
                 if novel.website not in extractors:
                     service_logger.error(f"Extractor for {novel.website} not found")
@@ -48,7 +44,7 @@ def broadcast_updates():
 
                 print(f"[{get_current_time()}] {novel.name} is checking for updates, updated {novel.lastest_chapter} to {new_chapters[-1].number}")
                 
-                novel.lastest_chapter = chapters[-1].number
+                novels[i].lastest_chapter = chapters[-1].number
                 broadcast_message(message)
 
             time.sleep(BROADCAST_INTERVAL)

@@ -44,10 +44,10 @@ def test_extract_chapters_success(
 
     chapters = extractor.extract_chapters(novel)
 
-    assert chapters[0] == Chapter('/bkshow/0/5502/801/1/0/mb/1', '教訓王錚', 801)
-    assert chapters[-1] == Chapter('/bkshow/0/5502/900/1/0/mb/1', '確定不知',900)
+    assert chapters[0] == Chapter('https://xyi6.com/bkshow/0/5502/801/1/0/mb/1', '第801章 教訓王錚', 801)
+    assert chapters[-1] == Chapter('https://xyi6.com/bkshow/0/5502/900/1/0/mb/1', '第900章 確定不知',900)
     assert len(chapters) == 100
-    assert str(chapters[0]) == "第801章 教訓王錚 /bkshow/0/5502/801/1/0/mb/1"
+    assert str(chapters[0]) == "第801章 第801章 教訓王錚 https://xyi6.com/bkshow/0/5502/801/1/0/mb/1"
 
 @patch('requests.post')
 def test_request_failure(mock_post, extractor: xyi6_com_extractor):
